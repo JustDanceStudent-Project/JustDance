@@ -1,0 +1,6 @@
+Apply noise filter to raw data
+Sample in fixed width, 2 secs, find out no. of samples per window
+Acceleration should only hav low frequency components, filter tht out
+
+https://www.raspberrypi-spy.co.uk/2013/07/running-a-python-script-at-boot-using-cron/
+Check above link for running the script on boot
