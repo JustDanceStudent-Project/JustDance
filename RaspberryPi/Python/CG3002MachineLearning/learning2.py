@@ -18,6 +18,17 @@ def segment_signal (data, window_size):
 		segments[i] = np.vstack(segment)
 	return segments
 
+def segment_signal_sliding (data, window_size, overlap):
+    N = data.shape[0]
+    dim = data.shape[1]
+    L = int(window_size * (1 - overlap))
+    K = int((N - window_size) / L) + 1
+    segments = np.empty((K, window_size, dim),dtype=float)
+    for i in range(K):
+        segment = data[i*L:i*L+window_size,:]
+        segments[i] = np.vstack(segment)
+    return segments
+
 def window_input (data):
     # Data in K by m by n ndarray
     nWindows = data.shape[0]
@@ -49,7 +60,7 @@ list_target = []
 for nActivity in range(1,12):
     print('nActivity: {0}'.format(nActivity))
     tempdf = dataSet[dataSet.activity == nActivity]
-    list_dataSet.append(segment_signal(tempdf.iloc[:,1:7].as_matrix(), windowSize))
+    list_dataSet.append(segment_signal_sliding(tempdf.iloc[:,1:7].as_matrix(), windowSize,0))
     print(list_dataSet[nActivity-1].shape)
     list_target.append(np.ones((list_dataSet[nActivity-1].shape[0],1)))
     print(list_target[nActivity-1].shape)

@@ -23,6 +23,17 @@ def segment_signal (data, window_size):
 		segments[i] = np.vstack(segment)
 	return segments
 
+def segment_signal_sliding (data, window_size, overlap):
+    N = data.shape[0]
+    dim = data.shape[1]
+    L = int(window_size * (1 - overlap))
+    K = int((N - window_size) / L) + 1
+    segments = np.empty((K, window_size, dim),dtype=float)
+    for i in range(K):
+        segment = data[i*L:i*L+window_size,:]
+        segments[i] = np.vstack(segment)
+    return segments
+
 def window_input (data):
     # Data in K by m by n ndarray
     nWindows = data.shape[0]
