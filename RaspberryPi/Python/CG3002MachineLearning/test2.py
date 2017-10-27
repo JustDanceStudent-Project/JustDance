@@ -72,7 +72,7 @@ for x in range(0,3)    :
     list_dataSetInput = []
     list_target = []
     for x in range(1,12):
-        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,7:10].as_matrix(), windowSize,overlap))
+        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,5:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], x))
@@ -117,7 +117,7 @@ for nNodes in range(11,arrayData.shape[1]+1):
         accuracyNN.append(mlpclf.score(arrayData[test],arrayTarget[test]))
         cmNN = confusion_matrix(arrayTarget[test],nn_predictions)
         
-        with open('test_result1.txt', 'a') as f:
+        with open('test_result2.txt', 'a') as f:
             f.write('For %i fold\n' %fold_index)
             f.write('The classification accuracy for NN is %f\n' %accuracyNN[fold_index])
             f.write('And the confusion matrix is:\n')
@@ -135,7 +135,7 @@ for nNodes in range(11,arrayData.shape[1]+1):
     for x in range(0,len(accuracyNN)):
         avg += accuracyNN[x]
     print("Average accuracy for {0} nodes: {1}".format(nNodes,avg/len(accuracyNN)))
-    with open('test_result1.txt','a') as f:
+    with open('test_result2.txt','a') as f:
         f.write("Average accuracy for {0} nodes: {1}\n".format(nNodes,avg/len(accuracyNN)))
     avgAcc.append(avg/len(accuracyNN))
 
@@ -147,6 +147,7 @@ for x in range(1,len(avgAcc)):
     
 print("Highest average accuracy: {0}".format(highest))
 print("with {0} number of nodes in first hidden layer".format(numNode))    
-with open('test_result1.txt', 'a') as f:
+with open('test_result2.txt', 'a') as f:
     f.write("\nHighest average accuracy: {0}\n".format(highest))
     f.write("with {0} number of nodes in first hidden layer\n".format(numNode))
+
