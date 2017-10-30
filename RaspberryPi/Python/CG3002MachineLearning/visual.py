@@ -21,9 +21,9 @@ dataStart = 500
 removeDataEnd = True
 dataEnd = 6000 - (dataStart if removeDataStart else 0)
 
-setAxis = False
-rowStart = 550
-rowEnd= 790
+setAxis = True
+rowStart = 1550
+rowEnd= 1790
 yMin = -200
 yMax = 200
 

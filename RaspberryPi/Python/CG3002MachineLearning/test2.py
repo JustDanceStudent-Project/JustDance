@@ -72,7 +72,7 @@ for x in range(0,3)    :
     list_dataSetInput = []
     list_target = []
     for x in range(1,12):
-        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,5:10].as_matrix(), windowSize,overlap))
+        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], x))
