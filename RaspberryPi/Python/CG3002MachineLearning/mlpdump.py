@@ -39,32 +39,35 @@ def label(x):
         0: "BingYouMoveMerged",
         1: "MariniMoveMerged",
         2: "YCMoveMerged",
-    }.get(x, "")  
+    }.get(x, "")
 
 finalListData = []
 finalListTarget = []
 for x in range(0,3)    :
+    print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
     ds1.columns = ["activity","body_yaw","body_pitch","body_roll","body_xAccel","body_yAccel","body_zAccel","hand_xAccel","hand_yAccel","hand_zAccel"]
     #print(ds1.shape)
-    
+
     list_dataSet = []
     for x in range(1,12):
+        print("Parsing Activity {0}".format(x))
         tempDf = pd.DataFrame(ds1[ds1.activity == x].as_matrix())
         tempDf = tempDf.iloc[1000:6000]
         #print(tempDf.shape)
         list_dataSet.append(tempDf)
-        
+
     list_dataSetInput = []
     list_target = []
     for x in range(1,12):
+        print("Sorting data and target for Activity {0}".format(x))
         arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], x))
         #print(list_target[x-1].shape)
-        
+
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
     arrayTargetTmp = np.concatenate((list_target[0],list_target[1]),axis=0)
     for x in range(2,len(list_target)):
@@ -74,8 +77,8 @@ for x in range(0,3)    :
     finalListTarget.append(arrayTargetTmp)
     #print(arrayDataTmp.shape)
     #print(arrayTargetTmp.shape)
-    
 
+print("Merging parsed datasets")
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
 for x in range(2,len(finalListData)):
@@ -89,12 +92,13 @@ print(arrayTarget)
 print(arrayData.shape)
 print(arrayTarget.shape)
 '''
-
+print("Creating MLPCLF")
 mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes,),random_state=1)
+print("Training MLPCLF")
 mlpclf.fit(arrayData, arrayTarget)
 if not os.path.exists(mlp_savepath):
     os.makedirs(mlp_savepath)
     print('Folder "{0}" created\n'.format(mlp_savepath))
+print("Saving MLPCLF")
 joblib.dump(mlpclf, mlp_savepath + 'mlpclf1.pk1')
-
-
+print("MLPCLF saved")
