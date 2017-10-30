@@ -100,5 +100,5 @@ if not os.path.exists(mlp_savepath):
     os.makedirs(mlp_savepath)
     print('Folder "{0}" created\n'.format(mlp_savepath))
 print("Saving MLPCLF")
-joblib.dump(mlpclf, mlp_savepath + 'mlpclf1.pk1')
+joblib.dump(mlpclf, mlp_savepath + 'mlpclf1.pk1',protocol=2)
 print("MLPCLF saved")
