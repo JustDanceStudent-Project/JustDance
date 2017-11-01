@@ -18,6 +18,7 @@ for x in range(1,101):
         lines = f.readlines()
     if(x*winSize < len(lines)):
         print("Predicting with input from {0}th {2} lines of {1}".format(x,cache_filename,winSize))
+        print(lines)
         arrInput = np.genfromtxt(lines[(x-1)*winSize:x*winSize],delimiter=',')
         arrInput = arrInput.flatten()
         arrInput = preprocessing.normalize(arrInput).reshape(1,-1)

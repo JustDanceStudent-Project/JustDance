@@ -55,7 +55,7 @@ for x in range(3,4)    :
     for x in range(1,12):
         print("Parsing Activity {0}".format(x))
         tempDf = pd.DataFrame(ds1[ds1.activity == x].as_matrix())
-        tempDf = tempDf.iloc[1000:6000]
+        tempDf = tempDf.iloc[:1200]
         #print(tempDf.shape)
         list_dataSet.append(tempDf)
 
@@ -80,12 +80,16 @@ for x in range(3,4)    :
     #print(arrayTargetTmp.shape)
 
 print("Merging parsed datasets")
+'''
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
 arrayData = preprocessing.normalize(arrayData)
+'''
+arrayData = preprocessing.normalize(finalListData[0])
+arrayTarget = finalListTarget[0]
 
 '''
 print(arrayData)
