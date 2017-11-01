@@ -44,7 +44,7 @@ def label(x):
 
 finalListData = []
 finalListTarget = []
-for x in range(0,3)    :
+for x in range(3,4)    :
     print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)

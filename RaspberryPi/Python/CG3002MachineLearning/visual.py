@@ -12,16 +12,17 @@ from sklearn import preprocessing
 
 #filename = 'BingYouMoveMerged'
 #filename = 'MariniMoveMerged'
-filename = 'YCMoveMerged'
+#filename = 'YCMoveMerged'
+filename = 'AnniyaMoveMerged'
 
 normalise = True
 
-removeDataStart = True
-dataStart = 500
+removeDataStart = False
+dataStart = 200
 removeDataEnd = True
-dataEnd = 6000 - (dataStart if removeDataStart else 0)
+dataEnd = 1200 - (dataStart if removeDataStart else 0)
 
-setAxis = True
+setAxis = False
 rowStart = 1550
 rowEnd= 1790
 yMin = -200
