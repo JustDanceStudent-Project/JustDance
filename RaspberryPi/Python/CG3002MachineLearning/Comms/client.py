@@ -1,5 +1,4 @@
 import socket
-import sys
 import client_auth
 import time
 import threading
@@ -52,7 +51,7 @@ class client:
 
     def generateData(self):
         while True:
-            action = action = random.choice(self.actions)
+            #action = random.choice(self.actions)
             data = "#%s|%d|%d|%d|%d|" %(action, 0, 1, 2, 3)
             print("NEW DATA :: " + data)
             self.datas.append(data)
