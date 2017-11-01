@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 
 HELLO = b'\x02'
 ACK = b'\x00'
-ip_addr = '192.168.0.109'
+ip_addr = '192.168.1.9'
 port_num = 8080
 action = None
 action_set_time = None
@@ -41,7 +41,7 @@ def actionStr(x):
         9: "Squat & Turn",
         10: "Jumping",
         11: "Jumping Jacks",
-    }.get(x, "")
+    }.get(x, "No Action")
 
 
 class processData (threading.Thread):
@@ -89,7 +89,7 @@ class client:
         # secret key
         self.secret_key = 'yaquan5156yaquan'
         
-        self.dataRcvTime = 1
+        self.dataRcvTime = 2
         self.dataSendTime = 2
         
 
@@ -120,10 +120,10 @@ class client:
             self.datas.append(data)
 
             time.sleep(self.dataRcvTime)
-
-            
       
 thread_processData = processData()
+thread_client = client(ip_addr, port_num)
+'''
 port=serial.Serial(portName, baudRate)
 initFlag = True
 while(initFlag):
@@ -139,19 +139,22 @@ while(initFlag):
         port.write(ACK)
         print("Handshake is done")
         
-    port.flushInput()
+    port.flushInput()heh
+
 
 sensorData = []
      
 while (True):
     port.write(HELLO)
-    tempStr = ""
+    tempStr = b''
+
     readings = port.readline()
-    if 'MPU' in readings:
+    if 'MPU' == readings:
         for j in range(9):
             readings = port.readline()
             readings = readings.replace("\r\n", "")
-            tempStr += readings
-            tempStr += '\n' if j == 8 else ','
-    sensorData.append(tempStr)
+            tempStr += b'{0}'.format(readings)
+            tempStr += b'\n' if j == 8 else b','
 
+    sensorData.append(tempStr)
+'''
