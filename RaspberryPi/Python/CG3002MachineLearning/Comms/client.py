@@ -69,7 +69,9 @@ class client:
 
 #IP address = 'x.x.x.x'
 #Port = 8888
+'''
 ip_addr = '127.0.0.1'
 port_num = 8080
 
 my_client = client(ip_addr,port_num)
+'''

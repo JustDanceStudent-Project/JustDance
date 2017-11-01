@@ -111,7 +111,7 @@ class server:
 
 #IP address = 'x.x.x.x'
 #Port = 8888
-ip_addr = '127.0.0.1'
+ip_addr = '192.168.0.109'
 port_num = 8080
 
 my_server = server(ip_addr,port_num)
