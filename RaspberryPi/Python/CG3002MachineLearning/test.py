@@ -52,11 +52,12 @@ def label(x):
         0: "BingYouMoveMerged",
         1: "MariniMoveMerged",
         2: "YCMoveMerged",
+        3: "AnniyaMoveMerged",
     }.get(x, "")  
 
 finalListData = []
 finalListTarget = []
-for x in range(0,3)    :
+for x in range(0,4)    :
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
     ds1.columns = ["activity","body_yaw","body_pitch","body_roll","body_xAccel","body_yAccel","body_zAccel","hand_xAccel","hand_yAccel","hand_zAccel"]
@@ -72,7 +73,7 @@ for x in range(0,3)    :
     list_dataSetInput = []
     list_target = []
     for x in range(1,12):
-        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,7:10].as_matrix(), windowSize,overlap))
+        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], x))
