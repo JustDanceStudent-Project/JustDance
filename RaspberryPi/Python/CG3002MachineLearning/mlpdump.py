@@ -49,7 +49,7 @@ def label(x):
     
 finalListData = []
 finalListTarget = []
-for x in range(3,4)    :
+for x in range(0,3)    :
     print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
@@ -92,7 +92,7 @@ arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
-arrayData = preprocessing.scale(arrayData)
+#arrayData = preprocessing.scale(arrayData)
 
 '''
 arrayData = preprocessing.normalize(finalListData[0])

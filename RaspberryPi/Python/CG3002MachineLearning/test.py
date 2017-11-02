@@ -86,7 +86,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(0,5):
+for x in range(0,3):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
@@ -113,7 +113,6 @@ for x in range(0,5):
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], y))
-        #print(list_target[x-1].shape)
     
     print('Merging sorted activity data for {0}'.format(label(x)))
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
@@ -134,7 +133,7 @@ for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
 
-arrayData = preprocessing.scale(arrayData)
+#arrayData = preprocessing.scale(arrayData,axis=1)
 '''
 print(arrayData)
 print(arrayTarget)
