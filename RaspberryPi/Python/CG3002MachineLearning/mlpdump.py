@@ -6,9 +6,10 @@ from sklearn import preprocessing
 from sklearn.externals import joblib
 
 np.set_printoptions(threshold=np.nan)
-windowSize = 40
+windowSize = 100
 overlap = 0.5
-nNodes = 300
+nNodes1 = 450
+nNodes2 = 300
 mlp_savepath = os.getcwd() + '/mlp/'
 
 
@@ -34,14 +35,18 @@ def window_input (data):
         segments[i] = data[i].flatten()
     return segments
 
-def label(x):
-    return {
-        0: "BingYouMoveMerged",
-        1: "MariniMoveMerged",
-        2: "YCMoveMerged",
-        3: "AnniyaMoveMergedRaw",
-    }.get(x, "")
 
+def label(x):
+    # List of datasets present in work folder
+    return {
+        0: "Anniya_Final_RAW",
+        1: "BY_Final_RAW",
+        2: "Dana_Final_RAW",
+        3: "Marini_Final_RAW",
+        4: "Sneha_Final_RAW",
+        5: "YC_Final_RAW",
+    }.get(x, "") 
+    
 finalListData = []
 finalListTarget = []
 for x in range(3,4)    :
@@ -99,7 +104,7 @@ print(arrayData.shape)
 print(arrayTarget.shape)
 '''
 print("Creating MLPCLF")
-mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes,),random_state=1)
+mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes1,nNodes2,),random_state=1)
 print("Training MLPCLF")
 mlpclf.fit(arrayData, arrayTarget)
 if not os.path.exists(mlp_savepath):

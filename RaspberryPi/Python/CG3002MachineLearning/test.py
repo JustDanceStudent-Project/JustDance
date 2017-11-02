@@ -13,9 +13,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 
 np.set_printoptions(threshold=np.nan)
-windowSize = 40
+windowSize = 100
 overlap = 0.5
-nNodes = 300
+nNodes1 = 450
+nNodes2 = 300
 
 def segment_signal (data, window_size):
     # Segment m*n array into K*S*n given window size S
@@ -54,11 +55,12 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        0: "BingYouMoveMerged",
-        1: "MariniMoveMerged",
-        2: "YCMoveMerged",
-        3: "AnniyaMoveMergedRaw",
-        4: "DanaMoveMergedRaw",
+        0: "Anniya_Final_RAW",
+        1: "BY_Final_RAW",
+        2: "Dana_Final_RAW",
+        3: "Marini_Final_RAW",
+        4: "Sneha_Final_RAW",
+        5: "YC_Final_RAW",
     }.get(x, "") 
     
 def filter_data(data):
@@ -84,7 +86,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(3,5):
+for x in range(0,5):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
@@ -104,7 +106,7 @@ for x in range(3,5):
     list_target = []
     for y in range(1,12):
         print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
-        filtered_data = list_dataSet[y-1].iloc[:,1:10].as_matrix()
+        filtered_data = list_dataSet[y-1].iloc[:,4:10].as_matrix()
         #filtered_data = filter_data(list_dataSet[y-1].iloc[:,4:10].as_matrix())
         
         arrData = window_input(segment_signal_sliding(filtered_data, windowSize,overlap))
@@ -127,11 +129,11 @@ for x in range(3,5):
 print('Merging parsed datasets')
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
-'''
+
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
-'''
+
 arrayData = preprocessing.normalize(arrayData)
 '''
 print(arrayData)
@@ -147,7 +149,7 @@ fold_index = 0
 accuracyNN = []
 for train, test in kfold.split(arrayData):
     print('Starting NN fold %i' %fold_index)
-    mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes,),random_state=1)
+    mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes1,nNodes2,),random_state=1)
     mlpclf.fit(arrayData[train], arrayTarget[train])
     nn_predictions = mlpclf.predict(arrayData[test])
     accuracyNN.append(mlpclf.score(arrayData[test],arrayTarget[test]))
