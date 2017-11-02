@@ -1,6 +1,7 @@
 import threading
 import os
 import time
+import serial
 import client_auth
 import socket
 import numpy as np
@@ -27,6 +28,10 @@ cache_filename = 'anniyacache2.csv'
 cache_filepath = os.getcwd() + '/cache/'
 resultcache_filename = 'result.txt'
 sensorData = []
+
+newResultEvent = threading.Event()
+newDataEvent = threading.Event()
+
 
 def actionStr(x):
     # Returns activity string associated with integer
@@ -87,6 +92,7 @@ class processData (threading.Thread):
                 arrInput = arrInput.flatten()
                 arrInput = preprocessing.normalize(arrInput).reshape(1,-1)
                 result = int(self.mlpclf.predict(arrInput))
+                newResultEvent.set()
                 print(time.ctime())
                 print("Prediction: {0}".format(result))
                 print("Writing to {0}".format(resultcache_filename))
@@ -125,21 +131,24 @@ class client:
         
         i = 0
         time.sleep(10);
-        while True:
+        while newDataEvent.is_set():
             time.sleep(self.dataSendTime)
             encrypted = self.auth.encryptText(self.datas[i], self.secret_key)
             self.sock.send(encrypted)
+            newDataEvent.clear()
             print(self.datas[i])
             i = i + 1
             if(i == 20):
                 break
 
     def generateData(self):
-        while True:
+        while newResultEvent.is_set():
             action = actionStr(result)
             data = "#%s|%d|%d|%d|%d|" %(action, 0, 1, 2, 3)
             print("NEW DATA :: " + data)
             self.datas.append(data)
+            newResultEvent.clear()
+            newDataEvent.set()
 
             time.sleep(self.dataRcvTime)
       
@@ -161,7 +170,7 @@ while(initFlag):
         port.write(ACK)
         print("Handshake is done")
         
-    port.flushInput()heh
+    port.flushInput()
 
 
 sensorData = []
