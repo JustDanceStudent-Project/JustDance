@@ -19,7 +19,7 @@ action = None
 action_set_time = None
 result = None
 portName = '/dev/ttyS0'
-baudRate = 9600
+baudRate = 115200
 winSize = 120
 mlp_filepath = os.getcwd() + '/mlp/'
 mlp_filename = 'mlpclf1.pk1'
@@ -145,7 +145,7 @@ class client:
       
 thread_processData = processData()
 thread_client = client(ip_addr, port_num)
-'''
+
 port=serial.Serial(portName, baudRate)
 initFlag = True
 while(initFlag):
@@ -179,4 +179,4 @@ while (True):
             tempStr += b'\n' if j == 8 else b','
 
     sensorData.append(tempStr)
-'''
+

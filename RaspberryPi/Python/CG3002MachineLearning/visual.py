@@ -7,13 +7,16 @@ Created on Mon Oct  9 13:33:57 2017
 
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 import pandas as pd
+from scipy import signal
 from sklearn import preprocessing
 
 #filename = 'BingYouMoveMerged'
 #filename = 'MariniMoveMerged'
 #filename = 'YCMoveMerged'
-filename = 'AnniyaMoveMerged'
+filename = 'AnniyaMoveMergedRaw'
+#filename = 'DanaaMoveMergedRaw'
 
 normalise = True
 
@@ -22,7 +25,7 @@ dataStart = 100
 removeDataEnd = True
 dataEnd = -100
 
-setAxis = False
+setAxis = True
 rowStart = 1550
 rowEnd= 1790
 yMin = -200
@@ -40,6 +43,27 @@ def label(x):
         8: "hand_yAccel",
         9: "hand_zAccel",
     }.get(x, "")
+    
+def filter_data(data):
+    # Takes in m * n nparray containing only sensor data and filters them, 1 sensor channel per column
+    if data.size != 0 :
+        list_filtered = []
+        n = 1000
+        b = [1.0 / n] * n
+        a = 1
+        #print(data.shape)
+        for x in range(data.shape[1]):
+            #list_column.append(data[:,x:x+1])
+            #print(data[:,x:x+1].reshape(-1).shape)
+            yy = signal.lfilter(b,a,data[:,x:x+1])
+            list_filtered.append(yy)
+            #print(list_filtered[x].shape)
+        data1 = np.concatenate(list_filtered, axis=1)
+        #print(data1.shape)
+        #print("Input size same as output size? {0}".format(True if data.shape == data1.shape else False))
+        return data1
+    else:
+        return data
 
 if (normalise):
     filepath = os.getcwd()+'/graph/'+filename+'_normalised'

@@ -104,7 +104,8 @@ for x in range(3,5):
     list_target = []
     for y in range(1,12):
         print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
-        filtered_data = filter_data(list_dataSet[y-1].iloc[:,1:10].as_matrix())
+        filtered_data = list_dataSet[y-1].iloc[:,1:10].as_matrix()
+        #filtered_data = filter_data(list_dataSet[y-1].iloc[:,4:10].as_matrix())
         
         arrData = window_input(segment_signal_sliding(filtered_data, windowSize,overlap))
         list_dataSetInput.append(arrData)
@@ -151,15 +152,7 @@ for train, test in kfold.split(arrayData):
     nn_predictions = mlpclf.predict(arrayData[test])
     accuracyNN.append(mlpclf.score(arrayData[test],arrayTarget[test]))
     cmNN = confusion_matrix(arrayTarget[test],nn_predictions)
-'''        
-    with open('test_result1.txt', 'a') as f:
-        f.write('For %i fold\n' %fold_index)
-        f.write('The classification accuracy for NN is %f\n' %accuracyNN[fold_index])
-        f.write('And the confusion matrix is:\n')
-        f.write(np.array2string(cmNN))
-        f.write('\n\n')
-'''
-        
+
     print('The classification accuracy for NN is %f' %accuracyNN[fold_index])
     print('And the confusion matrix is:')
     print(cmNN)
