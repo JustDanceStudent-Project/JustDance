@@ -12,13 +12,19 @@ import pandas as pd
 from scipy import signal
 from sklearn import preprocessing
 
-#filename = 'BingYouMoveMerged'
-#filename = 'MariniMoveMerged'
-#filename = 'YCMoveMerged'
-filename = 'AnniyaMoveMergedRaw'
-#filename = 'DanaaMoveMergedRaw'
-
+def label(x):
+    # List of datasets present in work folder
+    return {
+        0: "Anniya_Final_RAW",
+        1: "BY_Final_RAW",
+        2: "Dana_Final_RAW",
+        3: "Marini_Final_RAW",
+        4: "Sneha_Final_RAW",
+        5: "YC_Final_RAW",
+    }.get(x, "") 
 normalise = True
+
+filename = label(1)
 
 removeDataStart = False
 dataStart = 100
