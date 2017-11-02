@@ -13,9 +13,9 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 
 np.set_printoptions(threshold=np.nan)
-windowSize = 120
+windowSize = 40
 overlap = 0.5
-nNodes = 450
+nNodes = 300
 
 def segment_signal (data, window_size):
     # Segment m*n array into K*S*n given window size S
@@ -57,7 +57,8 @@ def label(x):
         0: "BingYouMoveMerged",
         1: "MariniMoveMerged",
         2: "YCMoveMerged",
-        3: "AnniyaMoveMerged",
+        3: "AnniyaMoveMergedRaw",
+        4: "DanaMoveMergedRaw",
     }.get(x, "") 
     
 def filter_data(data):
@@ -83,62 +84,63 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(3,4)    :
+for x in range(3,5):
     #consider moving datasets into separate folder
+    print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
     ds1.columns = ["activity","body_yaw","body_pitch","body_roll","body_xAccel","body_yAccel","body_zAccel","hand_xAccel","hand_yAccel","hand_zAccel"]
     #print(ds1.shape)
     
     list_dataSet = []
-    for x in range(1,12):
-        tempDf = pd.DataFrame(ds1[ds1.activity == x].as_matrix())
+    for y in range(1,12):
+        print("Parsing Activity {0} of {1}".format(y, label(x)))
+        tempDf = pd.DataFrame(ds1[ds1.activity == y].as_matrix())
         tempDf = tempDf.iloc[100:-100]
         #print(tempDf.shape)
         list_dataSet.append(tempDf)
         
     list_dataSetInput = []
     list_target = []
-    for x in range(1,12):
-        
-        filtered_data = filter_data(list_dataSet[x-1].iloc[:,1:10].as_matrix())
+    for y in range(1,12):
+        print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
+        filtered_data = filter_data(list_dataSet[y-1].iloc[:,1:10].as_matrix())
         
         arrData = window_input(segment_signal_sliding(filtered_data, windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
-        list_target.append(np.full(arrData.shape[0], x))
+        list_target.append(np.full(arrData.shape[0], y))
         #print(list_target[x-1].shape)
-        
+    
+    print('Merging sorted activity data for {0}'.format(label(x)))
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
     arrayTargetTmp = np.concatenate((list_target[0],list_target[1]),axis=0)
-    for x in range(2,len(list_target)):
-        arrayDataTmp = np.concatenate((arrayDataTmp,list_dataSetInput[x]),axis=0)
-        arrayTargetTmp = np.concatenate((arrayTargetTmp,list_target[x]),axis=0)
+    for y in range(2,len(list_target)):
+        arrayDataTmp = np.concatenate((arrayDataTmp,list_dataSetInput[y]),axis=0)
+        arrayTargetTmp = np.concatenate((arrayTargetTmp,list_target[y]),axis=0)
     finalListData.append(arrayDataTmp)
     finalListTarget.append(arrayTargetTmp)
     #print(arrayDataTmp.shape)
     #print(arrayTargetTmp.shape)
     
-'''
+print('Merging parsed datasets')
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
+'''
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
-
+'''
 arrayData = preprocessing.normalize(arrayData)
-
-
+'''
 print(arrayData)
 print(arrayTarget)
 print(arrayData.shape)
 print(arrayTarget.shape)
-'''
-arrayData = preprocessing.normalize(finalListData[0])
-arrayTarget = finalListTarget[0]
+
 #print(arrayData.shape)
 #print(arrayTarget.shape)
-
+'''
 kfold = KFold(n_splits=10, shuffle=True)
 fold_index = 0
 accuracyNN = []
@@ -149,14 +151,14 @@ for train, test in kfold.split(arrayData):
     nn_predictions = mlpclf.predict(arrayData[test])
     accuracyNN.append(mlpclf.score(arrayData[test],arrayTarget[test]))
     cmNN = confusion_matrix(arrayTarget[test],nn_predictions)
-        
+'''        
     with open('test_result1.txt', 'a') as f:
         f.write('For %i fold\n' %fold_index)
         f.write('The classification accuracy for NN is %f\n' %accuracyNN[fold_index])
         f.write('And the confusion matrix is:\n')
         f.write(np.array2string(cmNN))
         f.write('\n\n')
-        
+'''
         
     print('The classification accuracy for NN is %f' %accuracyNN[fold_index])
     print('And the confusion matrix is:')

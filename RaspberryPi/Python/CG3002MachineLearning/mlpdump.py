@@ -39,7 +39,7 @@ def label(x):
         0: "BingYouMoveMerged",
         1: "MariniMoveMerged",
         2: "YCMoveMerged",
-        3: "AnniyaMoveMerged",
+        3: "AnniyaMoveMergedRaw",
     }.get(x, "")
 
 finalListData = []
@@ -52,23 +52,24 @@ for x in range(3,4)    :
     #print(ds1.shape)
 
     list_dataSet = []
-    for x in range(1,12):
-        print("Parsing Activity {0}".format(x))
-        tempDf = pd.DataFrame(ds1[ds1.activity == x].as_matrix())
+    for y in range(1,12):
+        print("Parsing Activity {0} of {1}".format(y, label(x)))
+        tempDf = pd.DataFrame(ds1[ds1.activity == y].as_matrix())
         tempDf = tempDf.iloc[100:-100]
         #print(tempDf.shape)
         list_dataSet.append(tempDf)
 
     list_dataSetInput = []
     list_target = []
-    for x in range(1,12):
-        print("Sorting data and target for Activity {0}".format(x))
+    for y in range(1,12):
+        print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
         arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], x))
         #print(list_target[x-1].shape)
 
+    print('Merging sorted activity data for {0}'.format(label(x)))
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
     arrayTargetTmp = np.concatenate((list_target[0],list_target[1]),axis=0)
     for x in range(2,len(list_target)):
