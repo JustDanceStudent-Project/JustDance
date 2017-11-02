@@ -86,18 +86,19 @@ for x in range(3,4)    :
     #print(arrayTargetTmp.shape)
 
 print("Merging parsed datasets")
-'''
+
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
-arrayData = preprocessing.normalize(arrayData)
+arrayData = preprocessing.scale(arrayData)
+
 '''
 arrayData = preprocessing.normalize(finalListData[0])
 arrayTarget = finalListTarget[0]
 
-'''
+
 print(arrayData)
 print(arrayTarget)
 print(arrayData.shape)

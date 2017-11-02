@@ -22,16 +22,16 @@ def label(x):
         4: "Sneha_Final_RAW",
         5: "YC_Final_RAW",
     }.get(x, "") 
-normalise = True
+normalise = False
 
 filename = label(1)
 
-removeDataStart = False
+removeDataStart = True
 dataStart = 100
 removeDataEnd = True
 dataEnd = -100
 
-setAxis = True
+setAxis = False
 rowStart = 1550
 rowEnd= 1790
 yMin = -200
@@ -107,7 +107,7 @@ print(list_dataSet[1].shape)
 '''
 
 
-for nActivity in range(1,12):
+for nActivity in range(4,6):
     for nSensor in range(1,10):
         if(list_dataSet[nActivity-1].empty): break
         print('Activity %d' %nActivity)

@@ -134,7 +134,7 @@ for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
 
-#arrayData = preprocessing.normalize(arrayData)
+arrayData = preprocessing.scale(arrayData)
 '''
 print(arrayData)
 print(arrayTarget)
