@@ -14,17 +14,18 @@ warnings.filterwarnings('ignore')
 
 HELLO = b'\x02'
 ACK = b'\x00'
-ip_addr = '172.17.115.76'
+ip_addr = '192.168.0.109'
 port_num = 8080
 portName = '/dev/ttyS0'
 baudRate = 115200
-winSize = 40
-mlp_filepath = os.getcwd() + '/mlp/'
-mlp_filename = 'mlpclf1.pk1'
-cache_filename = 'anniyacache2.csv'
-cache_filepath = os.getcwd() + '/cache/'
-resultcache_filename = 'result.txt'
-movecache_filename = 'MoveRaw.csv'
+winSize = 100
+homepath = '/home/pi/CG3002MachineLearning'
+mlp_filepath = '/mlp'
+mlp_filename = '/mlpclf1.pk1'
+cache_filename = '/anniyacache2.csv'
+cache_filepath = '/cache'
+resultcache_filename = '/result.txt'
+movecache_filename = '/MoveRaw.csv'
 sensorData = []
 arrMeasure = np.empty((3, 1),dtype=float)
 result = None
@@ -75,11 +76,11 @@ class processData (threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         print("Loading MLP")
-        self.mlpclf = joblib.load(mlp_filepath + mlp_filename)
+        self.mlpclf = joblib.load(homepath + mlp_filepath + mlp_filename)
         print("MLP loaded")
-        if(os.path.isfile(os.getcwd() + '/' + resultcache_filename)):
-            os.remove(os.getcwd() + '/' + resultcache_filename)
-            print('File {0} deleted'.format(os.getcwd() + '/' + resultcache_filename))
+        if(os.path.isfile(homepath + resultcache_filename)):
+            os.remove(homepath + resultcache_filename)
+            print('File {0} deleted'.format(homepath + resultcache_filename))
         self.daemon = True
         self.start()
       
@@ -104,7 +105,7 @@ class processData (threading.Thread):
                 print(time.ctime())
                 print("Prediction: {0}".format(result))
                 print("Writing to {0}".format(resultcache_filename))
-                with open(resultcache_filename, 'a') as f:
+                with open(homepath + resultcache_filename, 'a') as f:
                     f.write('{0}\n'.format(time.ctime()))
                     f.write('{0}\n'.format(result))
 
@@ -189,9 +190,9 @@ class readData (threading.Thread):
             port.flushInput()
 
         '''
-        if(os.path.isfile(os.getcwd() + '/' + movecache_filename)):
-            os.remove(os.getcwd() + '/' + movecache_filename)
-            print('File {0} deleted'.format(os.getcwd() + '/' + movecache_filename))
+        if(os.path.isfile(homepath + movecache_filename)):
+            os.remove(homepath + movecache_filename)
+            print('File {0} deleted'.format(homepath + movecache_filename))
         
         self.dataReadTime = 0.02
         self.daemon = True
@@ -226,7 +227,7 @@ class readData (threading.Thread):
 
                 
             sensorData.append(tempStr)
-            with open(movecache_filename, 'a') as f:
+            with open(homepath + movecache_filename, 'a') as f:
                 f.write((tempStr + b'\n').decode('utf-8'))
             
 
