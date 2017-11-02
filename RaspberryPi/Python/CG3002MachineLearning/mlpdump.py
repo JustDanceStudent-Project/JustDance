@@ -6,9 +6,9 @@ from sklearn import preprocessing
 from sklearn.externals import joblib
 
 np.set_printoptions(threshold=np.nan)
-windowSize = 120
+windowSize = 40
 overlap = 0.5
-nNodes = 450
+nNodes = 300
 mlp_savepath = os.getcwd() + '/mlp/'
 
 

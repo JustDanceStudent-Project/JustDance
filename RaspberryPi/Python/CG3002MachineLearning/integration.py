@@ -14,20 +14,20 @@ warnings.filterwarnings('ignore')
 
 HELLO = b'\x02'
 ACK = b'\x00'
-ip_addr = '192.168.1.9'
+ip_addr = '172.17.115.76'
 port_num = 8080
-action = None
-action_set_time = None
-result = None
 portName = '/dev/ttyS0'
 baudRate = 115200
-winSize = 120
+winSize = 40
 mlp_filepath = os.getcwd() + '/mlp/'
 mlp_filename = 'mlpclf1.pk1'
 cache_filename = 'anniyacache2.csv'
 cache_filepath = os.getcwd() + '/cache/'
 resultcache_filename = 'result.txt'
+movecache_filename = 'MoveRaw.csv'
 sensorData = []
+arrMeasure = np.empty((3, 1),dtype=float)
+result = None
 
 newResultEvent = threading.Event()
 newDataEvent = threading.Event()
@@ -84,11 +84,19 @@ class processData (threading.Thread):
         self.start()
       
     def run(self):
+        global result
+        global arrMeasure
         while(True):
+            #print('Predictor check: {0}'.format(len(sensorData)))
             time.sleep(2)
             if(len(sensorData) > winSize * 1.5):
-                arrInput = np.genfromtxt(sensorData[-winSize:],delimiter=',')
+                arrInput = np.genfromtxt(sensorData[-winSize:],dtype='float',delimiter=',')
+                arrMeasure = np.genfromtxt(sensorData[-1:],dtype='float',delimiter=',')
+                arrMeasure = arrMeasure[-4:]
+                print(arrMeasure)
                 arrInput = np.delete(arrInput, np.s_[:3], axis=1)
+                arrInput = np.delete(arrInput, np.s_[-4:], axis=1)
+                print(arrInput.shape)
                 arrInput = arrInput.flatten()
                 arrInput = preprocessing.normalize(arrInput).reshape(1,-1)
                 result = int(self.mlpclf.predict(arrInput))
@@ -103,6 +111,7 @@ class processData (threading.Thread):
 class client:
     def __init__(self, ip_addr, port_num):
         # init server
+        
         self.auth = client_auth.client_auth()
 
         # creat socket 
@@ -131,61 +140,101 @@ class client:
         
         i = 0
         time.sleep(10);
-        while newDataEvent.is_set():
+        while True:
+            #print('newDataEvent check')
             time.sleep(self.dataSendTime)
-            encrypted = self.auth.encryptText(self.datas[i], self.secret_key)
-            self.sock.send(encrypted)
-            newDataEvent.clear()
-            print(self.datas[i])
-            i = i + 1
-            if(i == 20):
-                break
+            if newDataEvent.is_set():
+                newDataEvent.clear()
+                encrypted = self.auth.encryptText(self.datas[i], self.secret_key)
+                self.sock.send(encrypted)
+                    
+                print(self.datas[i])
+                i = i + 1            
 
     def generateData(self):
-        while newResultEvent.is_set():
-            action = actionStr(result)
-            data = "#%s|%d|%d|%d|%d|" %(action, 0, 1, 2, 3)
-            print("NEW DATA :: " + data)
-            self.datas.append(data)
-            newResultEvent.clear()
-            newDataEvent.set()
+        global result
+        global arrMeasure
+        while True:
+            #print('newResultEvent check')
+            if newResultEvent.is_set():
+                #print(result)
+                action = actionStr(result)
+                data = "#%s|%d|%d|%d|%d|" %(action, arrMeasure[0], arrMeasure[1], arrMeasure[2], arrMeasure[3])
+                print("NEW DATA :: " + data)
+                self.datas.append(data)
+                newResultEvent.clear()
+                newDataEvent.set()
 
             time.sleep(self.dataRcvTime)
-      
+
+class readData (threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        '''
+        port=serial.Serial(portName, baudRate)
+        initFlag = True
+        while(initFlag):
+            #time.sleep(1)
+            print('Yo')
+            port.write(HELLO)
+            
+            response = port.readline()
+            #print(len(response))
+            
+            if (len(response) > 0):
+                initFlag = False
+                port.write(ACK)
+                print("Handshake is done")
+                
+            port.flushInput()
+
+        '''
+        if(os.path.isfile(os.getcwd() + '/' + movecache_filename)):
+            os.remove(os.getcwd() + '/' + movecache_filename)
+            print('File {0} deleted'.format(os.getcwd() + '/' + movecache_filename))
+        
+        self.dataReadTime = 0.02
+        self.daemon = True
+        self.start()
+        
+    def run(self):
+        global sensorData
+        while (True):
+            #port.write(HELLO)
+            time.sleep(self.dataReadTime)
+            #print('Reading Data')
+            tempStr = b'0,1,2,3,4,5,6,7,8,9,10,11,12\n'
+            #tempStr = bytearray()
+            
+            #readings = port.readline()
+            '''
+            if 'MPU' == readings:
+                for j in range(13):
+                    readings = port.readline()
+                    readings = readings.replace("\r\n", "")
+                    tempStr += b'{0}'.format(readings)
+                    if j == 8 :
+                        with open(movecache_filename, 'a') as f:
+                            f.write((tempStr + b'\n').decode('utf-8'))
+                    tempStr += b',' if j < 13 else b'\n'
+            '''
+            for j in range(13):
+                a=1
+                a=1
+                a=1
+                a=1
+
+                
+            sensorData.append(tempStr)
+            with open(movecache_filename, 'a') as f:
+                f.write((tempStr + b'\n').decode('utf-8'))
+            
+
+
+thread_readData = readData()
 thread_processData = processData()
 thread_client = client(ip_addr, port_num)
 
-port=serial.Serial(portName, baudRate)
-initFlag = True
-while(initFlag):
-    #time.sleep(1)
-    print('Yo')
-    port.write(HELLO)
-    
-    response = port.readline()
-    #print(len(response))
-    
-    if (len(response) > 0):
-        initFlag = False
-        port.write(ACK)
-        print("Handshake is done")
-        
-    port.flushInput()
 
-
-sensorData = []
-     
-while (True):
-    port.write(HELLO)
-    tempStr = b''
-
-    readings = port.readline()
-    if 'MPU' == readings:
-        for j in range(9):
-            readings = port.readline()
-            readings = readings.replace("\r\n", "")
-            tempStr += b'{0}'.format(readings)
-            tempStr += b'\n' if j == 8 else b','
-
-    sensorData.append(tempStr)
-
+while True:
+    pass
