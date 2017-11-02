@@ -55,7 +55,7 @@ for x in range(3,4)    :
     for x in range(1,12):
         print("Parsing Activity {0}".format(x))
         tempDf = pd.DataFrame(ds1[ds1.activity == x].as_matrix())
-        tempDf = tempDf.iloc[:1200]
+        tempDf = tempDf.iloc[100:-100]
         #print(tempDf.shape)
         list_dataSet.append(tempDf)
 

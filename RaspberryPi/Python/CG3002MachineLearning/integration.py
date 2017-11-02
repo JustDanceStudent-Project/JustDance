@@ -1,10 +1,10 @@
 import threading
 import os
-import serial
 import time
 import client_auth
 import socket
 import numpy as np
+from scipy import signal
 from sklearn import preprocessing
 from sklearn.externals import joblib
 
@@ -29,6 +29,7 @@ resultcache_filename = 'result.txt'
 sensorData = []
 
 def actionStr(x):
+    # Returns activity string associated with integer
     return {
         1: "Neutral",
         2: "Wave Hands",
@@ -42,6 +43,27 @@ def actionStr(x):
         10: "Jumping",
         11: "Jumping Jacks",
     }.get(x, "No Action")
+    
+def filter_data(data):
+    # Takes in m * n nparray containing only sensor data and filters them, 1 sensor channel per column
+    if data.size != 0 :
+        list_filtered = []
+        n = 15
+        b = [1.0 / n] * n
+        a = 1
+        #print(data.shape)
+        for x in range(data.shape[1]):
+            #list_column.append(data[:,x:x+1])
+            #print(data[:,x:x+1].reshape(-1).shape)
+            yy = signal.lfilter(b,a,data[:,x:x+1])
+            list_filtered.append(yy)
+            #print(list_filtered[x].shape)
+        data1 = np.concatenate(list_filtered, axis=1)
+        #print(data1.shape)
+        #print("Input size same as output size? {0}".format(True if data.shape == data1.shape else False))
+        return data1
+    else:
+        return data
 
 
 class processData (threading.Thread):

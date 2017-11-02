@@ -18,9 +18,9 @@ filename = 'AnniyaMoveMerged'
 normalise = True
 
 removeDataStart = False
-dataStart = 200
+dataStart = 100
 removeDataEnd = True
-dataEnd = 1200 - (dataStart if removeDataStart else 0)
+dataEnd = -100
 
 setAxis = False
 rowStart = 1550
