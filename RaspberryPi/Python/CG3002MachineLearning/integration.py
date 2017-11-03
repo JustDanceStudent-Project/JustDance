@@ -32,6 +32,7 @@ result = None
 
 newResultEvent = threading.Event()
 newDataEvent = threading.Event()
+sentEvent = threading.Event()
 
 
 def actionStr(x):
@@ -81,6 +82,7 @@ class processData (threading.Thread):
         if(os.path.isfile(homepath + resultcache_filename)):
             os.remove(homepath + resultcache_filename)
             print('File {0} deleted'.format(homepath + resultcache_filename))
+        sentEvent.set()
         self.daemon = True
         self.start()
       
@@ -90,24 +92,29 @@ class processData (threading.Thread):
         while(True):
             #print('Predictor check: {0}'.format(len(sensorData)))
             time.sleep(2)
-            if(len(sensorData) > winSize * 1.5):
+            
+            if(len(sensorData) > winSize * 1.5 and sentEvent.is_set()):
+                sentEvent.clear()
+                #print(sensorData[-winSize:])
                 arrInput = np.genfromtxt(sensorData[-winSize:],dtype='float',delimiter=',')
+                if np.isnan(arrInput).any():
+                    print('Array has NaN')
+                    continue
+                #print(arrInput)
+                #print(arrInput.shape)
                 arrMeasure = np.genfromtxt(sensorData[-1:],dtype='float',delimiter=',')
                 arrMeasure = arrMeasure[-4:]
-                print(arrMeasure)
                 arrInput = np.delete(arrInput, np.s_[:3], axis=1)
                 arrInput = np.delete(arrInput, np.s_[-4:], axis=1)
-                print(arrInput.shape)
+                
                 arrInput = arrInput.flatten()
-                arrInput = preprocessing.normalize(arrInput).reshape(1,-1)
+                #arrInput = preprocessing.normalize(arrInput).reshape(1,-1)
                 result = int(self.mlpclf.predict(arrInput))
                 newResultEvent.set()
                 print(time.ctime())
-                print("Prediction: {0}".format(result))
-                print("Writing to {0}".format(resultcache_filename))
-                with open(homepath + resultcache_filename, 'a') as f:
-                    f.write('{0}\n'.format(time.ctime()))
-                    f.write('{0}\n'.format(result))
+                print("Prediction: {0}".format(actionStr(result)))
+                
+                
 
 class client:
     def __init__(self, ip_addr, port_num):
@@ -127,8 +134,8 @@ class client:
         # secret key
         self.secret_key = 'yaquan5156yaquan'
         
-        self.dataRcvTime = 2
-        self.dataSendTime = 2
+        self.dataRcvTime = 0
+        self.dataSendTime = 0
         
 
         self.datas = []
@@ -148,6 +155,7 @@ class client:
                 newDataEvent.clear()
                 encrypted = self.auth.encryptText(self.datas[i], self.secret_key)
                 self.sock.send(encrypted)
+                sentEvent.set()
                     
                 print(self.datas[i])
                 i = i + 1            
@@ -171,25 +179,25 @@ class client:
 class readData (threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        '''
-        port=serial.Serial(portName, baudRate)
+        
+        self.port=serial.Serial(portName, baudRate)
         initFlag = True
         while(initFlag):
             #time.sleep(1)
             print('Yo')
-            port.write(HELLO)
+            self.port.write(HELLO)
             
-            response = port.readline()
+            response = self.port.readline()
             #print(len(response))
             
             if (len(response) > 0):
                 initFlag = False
-                port.write(ACK)
+                self.port.write(ACK)
                 print("Handshake is done")
                 
-            port.flushInput()
+            self.port.flushInput()
 
-        '''
+        
         if(os.path.isfile(homepath + movecache_filename)):
             os.remove(homepath + movecache_filename)
             print('File {0} deleted'.format(homepath + movecache_filename))
@@ -201,35 +209,29 @@ class readData (threading.Thread):
     def run(self):
         global sensorData
         while (True):
-            #port.write(HELLO)
-            time.sleep(self.dataReadTime)
+            bSaveData = True
+            self.port.write(HELLO)
+            #time.sleep(self.dataReadTime)
             #print('Reading Data')
-            tempStr = b'0,1,2,3,4,5,6,7,8,9,10,11,12\n'
-            #tempStr = bytearray()
+            #tempStr = b'0,1,2,3,4,5,6,7,8,9,10,11,12\n'
+            tempStr = bytearray()
             
-            #readings = port.readline()
-            '''
-            if 'MPU' == readings:
+            readings = self.port.readline()
+            
+            if b'MPU\r\n' == readings:
                 for j in range(13):
-                    readings = port.readline()
+                    readings = self.port.readline().decode('utf-8')
                     readings = readings.replace("\r\n", "")
-                    tempStr += b'{0}'.format(readings)
-                    if j == 8 :
-                        with open(movecache_filename, 'a') as f:
-                            f.write((tempStr + b'\n').decode('utf-8'))
-                    tempStr += b',' if j < 13 else b'\n'
-            '''
-            for j in range(13):
-                a=1
-                a=1
-                a=1
-                a=1
-
-                
-            sensorData.append(tempStr)
-            with open(homepath + movecache_filename, 'a') as f:
-                f.write((tempStr + b'\n').decode('utf-8'))
+                    if readings == 'MPU':
+                        bSaveData = False
+                        break
+                    tempStr += readings.encode('utf-8')
             
+                    tempStr += b',' if j < 12 else b'\n'
+            
+            
+            if bSaveData and tempStr != b'': sensorData.append(tempStr)
+            #print(tempStr.decode('utf-8'))
 
 
 thread_readData = readData()

@@ -68,18 +68,18 @@ for x in range(0,3)    :
     list_target = []
     for y in range(1,12):
         print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
-        arrData = window_input(segment_signal_sliding(list_dataSet[x-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
+        arrData = window_input(segment_signal_sliding(list_dataSet[y-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
         #print(list_dataSetInput[x-1].shape)
-        list_target.append(np.full(arrData.shape[0], x))
+        list_target.append(np.full(arrData.shape[0], y))
         #print(list_target[x-1].shape)
 
     print('Merging sorted activity data for {0}'.format(label(x)))
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
     arrayTargetTmp = np.concatenate((list_target[0],list_target[1]),axis=0)
-    for x in range(2,len(list_target)):
-        arrayDataTmp = np.concatenate((arrayDataTmp,list_dataSetInput[x]),axis=0)
-        arrayTargetTmp = np.concatenate((arrayTargetTmp,list_target[x]),axis=0)
+    for y in range(2,len(list_target)):
+        arrayDataTmp = np.concatenate((arrayDataTmp,list_dataSetInput[y]),axis=0)
+        arrayTargetTmp = np.concatenate((arrayTargetTmp,list_target[y]),axis=0)
     finalListData.append(arrayDataTmp)
     finalListTarget.append(arrayTargetTmp)
     #print(arrayDataTmp.shape)
