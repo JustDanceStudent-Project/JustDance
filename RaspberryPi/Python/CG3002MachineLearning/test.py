@@ -81,7 +81,8 @@ def label(x):
         19: "anniya1_tc",
         #20: "yh_win", #confuses classifier
         20: "anniya1_fb",                
-        21: "marini_jj",                
+        21: "marini_jj",              
+        21: "marini_ss",              
     }.get(x, "") 
     
 def filter_data(data):
@@ -107,7 +108,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(2,22):
+for x in range(2,23):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
