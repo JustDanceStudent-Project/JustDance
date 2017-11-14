@@ -55,21 +55,32 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        2: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
+        1: "danastc",
+                
+        2: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        3: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        4: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
         
-        3: "Anniya_Final_RAW",
-        4: "BY_Final_RAW",
-        5: "Dana_Final_RAW",
+        5: "Anniya_Final_RAW",
+        6: "BY_Final_RAW",
+        7: "Dana_Final_RAW",
         
-        6: "anniyatc",
-        7: "bytc",
-        8: "marinitc",
-        9: "dawoodtc",
+        8: "anniyatc",
+        9: "bytc",
+        10: "marinitc",
+        11: "dawoodtc",
         
-        10: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
-        11: "danastc",          
+        12: "sneha_fb",
+        13: "sneha_tc",
+        14: "dana_tc",
+        15: "yh_fb",
+        16: "sneha_ss",        
+        17: "yh_ss",        
+        18: "sneha_win360",
+        19: "anniya1_tc",
+        20: "yh_win",
+        21: "anniya1_fb",                
     }.get(x, "") 
     
 def filter_data(data):
@@ -95,7 +106,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(0,10):
+for x in range(2,21):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
@@ -105,7 +116,7 @@ for x in range(0,10):
     
     list_dataSet = []
     for y in range(1,12):
-        print("Parsing Activity {0} of {1}".format(y, label(x)))
+        #print("Parsing Activity {0} of {1}".format(y, label(x)))
         tempDf = pd.DataFrame(ds1[ds1.activity == y].as_matrix())
         tempDf = tempDf.iloc[100:-100]
         #print(tempDf.shape)
@@ -114,7 +125,7 @@ for x in range(0,10):
     list_dataSetInput = []
     list_target = []
     for y in range(1,12):
-        print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
+        #print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
         filtered_data = list_dataSet[y-1].iloc[:,4:10].as_matrix()
         #filtered_data = filter_data(list_dataSet[y-1].iloc[:,4:10].as_matrix())
         
@@ -123,7 +134,7 @@ for x in range(0,10):
         #print(list_dataSetInput[x-1].shape)
         list_target.append(np.full(arrData.shape[0], y))
     
-    print('Merging sorted activity data for {0}'.format(label(x)))
+    #print('Merging sorted activity data for {0}'.format(label(x)))
     arrayDataTmp = np.concatenate((list_dataSetInput[0],list_dataSetInput[1]),axis=0)
     arrayTargetTmp = np.concatenate((list_target[0],list_target[1]),axis=0)
     for y in range(2,len(list_target)):
