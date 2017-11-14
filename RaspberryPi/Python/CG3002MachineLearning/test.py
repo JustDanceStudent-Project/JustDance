@@ -55,12 +55,21 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        0: "Anniya_Final_RAW",
-        1: "BY_Final_RAW",
-        2: "Dana_Final_RAW",
-        3: "Marini_Final_RAW",
-        4: "Sneha_Final_RAW",
-        5: "YC_Final_RAW",
+        0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        2: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        
+        3: "Anniya_Final_RAW",
+        4: "BY_Final_RAW",
+        5: "Dana_Final_RAW",
+        
+        6: "anniyatc",
+        7: "bytc",
+        8: "marinitc",
+        9: "dawoodtc",
+        
+        10: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
+        11: "danastc",          
     }.get(x, "") 
     
 def filter_data(data):
@@ -86,7 +95,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(0,3):
+for x in range(0,10):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
