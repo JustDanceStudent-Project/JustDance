@@ -90,12 +90,14 @@ def label(x):
         28: "dana_14",
         29: "sneha_finalmove",
 
+        30: "AnniyaMoves12Nov",
+        31: "Sneha_Moves_Nov12",
         
-    }.get(x, "")     
+    }.get(x, "")
     
 finalListData = []
 finalListTarget = []
-for x in range(0,30)    :
+for x in range(0,32)    :
     print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
