@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 from sklearn.externals import joblib
+import pickle
 
 np.set_printoptions(threshold=np.nan)
 windowSize = 100
@@ -94,7 +95,7 @@ def label(x):
     
 finalListData = []
 finalListTarget = []
-for x in range(0,3)    :
+for x in range(0,30)    :
     print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
@@ -157,5 +158,7 @@ if not os.path.exists(mlp_savepath):
     os.makedirs(mlp_savepath)
     print('Folder "{0}" created\n'.format(mlp_savepath))
 print("Saving MLPCLF")
-joblib.dump(mlpclf, mlp_savepath + 'mlpclf3.pk1',protocol=0)
+#joblib.dump(mlpclf, mlp_savepath + 'mlpclf4.pk1',protocol=0)
+with open(mlp_savepath + 'mlpclf5.pk1','wb') as f:
+    pickle.dump(mlpclf,f)
 print("MLPCLF saved")
