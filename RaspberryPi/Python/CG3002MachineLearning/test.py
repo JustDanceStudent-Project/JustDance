@@ -88,11 +88,10 @@ def label(x):
         17: "sneha_ss",
         18: "marini_ss",
 
-        19: "marini_jj",                      
-        20: "dana_jj",                      
+        #19: "marini_jj",                      
+        19: "dana_jj",                      
         
         #11: "sneha_win360",
-        #12: "marini_jj",                      
         #18: "yh_win", 
     }.get(x, "") 
     
@@ -167,6 +166,16 @@ for x in range(2,len(finalListData)):
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
 
 #arrayData = preprocessing.scale(arrayData,axis=1)
+print(arrayData.shape)
+print((arrayTarget.reshape(-1,1)).shape)
+arrayFinal = np.concatenate((arrayTarget.reshape(-1,1), arrayData),axis=1)
+np.random.shuffle(arrayFinal)
+arrayData = arrayFinal[:,1:]
+arrayTarget = (arrayFinal[:,:1]).reshape(-1)
+print(arrayData.shape)
+print(arrayTarget.shape)
+
+
 '''
 print(arrayData)
 print(arrayTarget)
