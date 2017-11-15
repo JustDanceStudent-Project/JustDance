@@ -7,6 +7,7 @@ import client_auth
 import socket
 import re
 import numpy as np
+from scipy import stats
 from scipy import signal
 from sklearn import preprocessing
 from sklearn.externals import joblib
@@ -136,7 +137,7 @@ class client(threading.Thread):
     def run(self):
         print('Paused')
         i = 0
-        time.sleep(10);
+        #time.sleep(10);
         while True:
             time.sleep(self.dataSendTime)
             if len(self.datas) - i > 0:
@@ -151,9 +152,11 @@ class client(threading.Thread):
         global arrMeasure
         i = 0
         while True:
-            if len(result) - i > 0:
+            #if len(result) - i > 0:
+            if len(result) - i > 4:   
                 #print(result)
-                action = actionStr(result[i])
+                #action = actionStr(result[i])
+                action = actionStr(stats.mode(result[i:i+5],axis=None)[0])
                 #print(arrMeasure.shape)
                 data = "#%s|%f|%f|%f|%f|" %(action, arrMeasure[0], arrMeasure[1], arrMeasure[2], arrMeasure[3])
                 #print(time.ctime())
