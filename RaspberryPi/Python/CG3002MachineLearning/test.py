@@ -61,6 +61,7 @@ def label(x):
         #12: "anniya1_tc", #Bad data
         #16: "anniya1_fb",
         #18: "yh_ss", 
+
                 
         0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
         1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
@@ -88,11 +89,23 @@ def label(x):
         17: "sneha_ss",
         18: "marini_ss",
 
-        #19: "marini_jj",                      
         19: "dana_jj",                      
+        20: "marini_jj",                      
         
-        #11: "sneha_win360",
-        #18: "yh_win", 
+        21: "sneha_win360",
+        22: "marini_win360",
+        
+        23: "yh_win", 
+        24: "marini_win", 
+        25: "sneha_win", 
+        
+        26: "sneha_stc",
+        27: "marini_stc",
+
+        28: "dana_14",
+        29: "sneha_finalmove",
+
+        
     }.get(x, "") 
     
 def filter_data(data):
@@ -118,7 +131,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(0,20):
+for x in range(0,30):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
@@ -127,7 +140,7 @@ for x in range(0,20):
     #print(ds1.shape)
     
     list_dataSet = []
-    for y in range(1,12):
+    for y in range(1,13):
         #print("Parsing Activity {0} of {1}".format(y, label(x)))
         tempDf = pd.DataFrame(ds1[ds1.activity == y].as_matrix())
         tempDf = tempDf.iloc[100:-100]
@@ -136,7 +149,7 @@ for x in range(0,20):
         
     list_dataSetInput = []
     list_target = []
-    for y in range(1,12):
+    for y in range(1,13):
         #print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
         filtered_data = list_dataSet[y-1].iloc[:,4:10].as_matrix()
         #filtered_data = filter_data(list_dataSet[y-1].iloc[:,4:10].as_matrix())
@@ -167,7 +180,7 @@ for x in range(2,len(finalListData)):
 
 #arrayData = preprocessing.scale(arrayData,axis=1)
 print(arrayData.shape)
-print((arrayTarget.reshape(-1,1)).shape)
+print(arrayTarget.shape)
 arrayFinal = np.concatenate((arrayTarget.reshape(-1,1), arrayData),axis=1)
 np.random.shuffle(arrayFinal)
 arrayData = arrayFinal[:,1:]
