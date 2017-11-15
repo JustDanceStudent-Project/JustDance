@@ -39,13 +39,58 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        0: "Anniya_Final_RAW",
-        1: "BY_Final_RAW",
-        2: "Dana_Final_RAW",
-        3: "Marini_Final_RAW",
-        4: "Sneha_Final_RAW",
-        5: "YC_Final_RAW",
-    }.get(x, "") 
+        #0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
+        #1: "danastc",
+        
+        #12: "anniya1_tc", #Bad data
+        #16: "anniya1_fb",
+        #18: "yh_ss", 
+
+                
+        0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        2: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        
+        3: "Anniya_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        4: "BY_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        5: "Dana_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        
+        6: "anniyatc",
+        7: "bytc",
+        8: "marinitc",
+
+        9: "dana_tc",
+        10: "dawoodtc",
+        11: "sneha_tc",
+        
+        12: "anniya!_fbss",
+        13: "by!_fbss",
+        14: "dana!_fbss",
+        
+        15: "sneha_fb",
+        16: "yh_fb",
+        
+        17: "sneha_ss",
+        18: "marini_ss",
+
+        19: "dana_jj",                      
+        20: "marini_jj",                      
+        
+        21: "sneha_win360",
+        22: "marini_win360",
+        
+        23: "yh_win", 
+        24: "marini_win", 
+        25: "sneha_win", 
+        
+        26: "sneha_stc",
+        27: "marini_stc",
+
+        28: "dana_14",
+        29: "sneha_finalmove",
+
+        
+    }.get(x, "")     
     
 finalListData = []
 finalListTarget = []
@@ -57,7 +102,7 @@ for x in range(0,3)    :
     #print(ds1.shape)
 
     list_dataSet = []
-    for y in range(1,12):
+    for y in range(1,13):
         print("Parsing Activity {0} of {1}".format(y, label(x)))
         tempDf = pd.DataFrame(ds1[ds1.activity == y].as_matrix())
         tempDf = tempDf.iloc[100:-100]
@@ -66,7 +111,7 @@ for x in range(0,3)    :
 
     list_dataSetInput = []
     list_target = []
-    for y in range(1,12):
+    for y in range(1,13):
         print("Sorting data and target for Activity {0} of {1}".format(y, label(x)))
         arrData = window_input(segment_signal_sliding(list_dataSet[y-1].iloc[:,4:10].as_matrix(), windowSize,overlap))
         list_dataSetInput.append(arrData)
@@ -105,12 +150,12 @@ print(arrayData.shape)
 print(arrayTarget.shape)
 '''
 print("Creating MLPCLF")
-mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes1,),random_state=1)
+mlpclf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(nNodes1,nNodes2,),random_state=1)
 print("Training MLPCLF")
 mlpclf.fit(arrayData, arrayTarget)
 if not os.path.exists(mlp_savepath):
     os.makedirs(mlp_savepath)
     print('Folder "{0}" created\n'.format(mlp_savepath))
 print("Saving MLPCLF")
-joblib.dump(mlpclf, mlp_savepath + 'mlpclf2.pk1',protocol=0)
+joblib.dump(mlpclf, mlp_savepath + 'mlpclf3.pk1',protocol=0)
 print("MLPCLF saved")
