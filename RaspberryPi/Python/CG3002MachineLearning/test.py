@@ -57,6 +57,7 @@ def label(x):
     return {
         #0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
         #1: "danastc",
+        
         #12: "anniya1_tc", #Bad data
         #16: "anniya1_fb",
         #18: "yh_ss", 
@@ -84,12 +85,9 @@ def label(x):
         17: "sneha_ss",
         18: "marini_ss",
 
-            
         #11: "sneha_win360",
         #12: "marini_jj",                      
-                
-               
-        #18: "yh_win", #confuses classifier
+        #18: "yh_win", 
     }.get(x, "") 
     
 def filter_data(data):
