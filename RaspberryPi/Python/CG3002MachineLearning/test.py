@@ -55,34 +55,41 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
-        1: "danastc",
+        #0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
+        #1: "danastc",
+        #12: "anniya1_tc", #Bad data
+        #16: "anniya1_fb",
+        #18: "yh_ss", 
                 
-        2: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        3: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        4: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        2: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
         
-        5: "Anniya_Final_RAW",
-        6: "BY_Final_RAW",
-        7: "Dana_Final_RAW",
+        3: "Anniya_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        4: "BY_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
+        5: "Dana_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
         
-        8: "anniyatc",
-        9: "bytc",
-        10: "marinitc",
-        11: "dawoodtc",
-        
-        12: "sneha_fb",
-        13: "sneha_tc",
-        14: "dana_tc",
-        15: "yh_fb",
-        16: "sneha_ss",        
-        17: "yh_ss",        
-        18: "sneha_win360",
-        19: "anniya1_tc",
-        #20: "yh_win", #confuses classifier
-        20: "anniya1_fb",                
-        21: "marini_jj",              
-        21: "marini_ss",              
+        6: "anniyatc",
+        7: "bytc",
+        8: "marinitc",
+
+        9: "dana_tc",
+        10: "dawoodtc",
+        11: "sneha_tc",
+        12: "anniya!_fbss",
+        13: "by!_fbss",
+        14: "dana!_fbss",
+        15: "sneha_fb",
+        16: "yh_fb",
+        17: "sneha_ss",
+        18: "marini_ss",
+
+            
+        #11: "sneha_win360",
+        #12: "marini_jj",                      
+                
+               
+        #18: "yh_win", #confuses classifier
     }.get(x, "") 
     
 def filter_data(data):
@@ -108,7 +115,7 @@ def filter_data(data):
 
 finalListData = []
 finalListTarget = []
-for x in range(2,23):
+for x in range(0,19):
     #consider moving datasets into separate folder
     print('Parsing {0}'.format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
