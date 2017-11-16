@@ -85,6 +85,9 @@ class processData (threading.Thread):
         global result
         global arrMeasure
         global sensorData
+        
+        t_end = time.monotonic() + 60 * 1
+        
         while(True):
             time.sleep(1)
             
@@ -98,9 +101,11 @@ class processData (threading.Thread):
                 arrMeasure = arrMeasure[-4:]
                 arrInput = np.delete(arrInput, np.s_[:3], axis=1)
                 arrInput = np.delete(arrInput, np.s_[-4:], axis=1)
-                
-                arrInput = arrInput.flatten()
-                result.append(int(self.mlpclf.predict(arrInput)))
+                if (time.monotonic() < t_end):
+                    with open("data.csv","a") as f:
+                        f.write(arrInput)
+                clfInput = arrInput.flatten()
+                result.append(int(self.mlpclf.predict(clfInput)))
                 print(time.ctime())
                 print("Prediction: {0}".format(actionStr(result[len(result) - 1])))
 
