@@ -18,7 +18,7 @@ warnings.filterwarnings('ignore')
 
 HELLO = b'\x02'
 ACK = b'\x00'
-ip_addr = '172.17.113.221'
+ip_addr = '192.168.0.106'
 port_num = 8080
 portName = '/dev/ttyAMA0'
 baudRate = 115200
@@ -49,6 +49,7 @@ def actionStr(x):
         10: "Jumping",
         11: "Jumping Jacks",
         12: "Final Move",
+        13: "Time Out"
     }.get(x, "No Action")
     
 def filter_data(data):
@@ -85,7 +86,7 @@ class processData (threading.Thread):
         global result
         global arrMeasure
         global sensorData
-        
+        time.sleep(5)
         t_end = time.monotonic() + 60 * 1
         
         while(True):
@@ -102,10 +103,10 @@ class processData (threading.Thread):
                 arrInput = np.delete(arrInput, np.s_[:3], axis=1)
                 arrInput = np.delete(arrInput, np.s_[-4:], axis=1)
                 if (time.monotonic() < t_end):
-                    with open("data.csv","a") as f:
-                        f.write(arrInput)
+                    with open("data.csv","ab") as f:
+                        np.savetxt(f,arrInput,delimiter=",")
                 clfInput = arrInput.flatten()
-                result.append(int(self.mlpclf.predict(clfInput)))
+                result.append(int(self.mlpclf.predict(clfInput)) if time.monotonic() < t_end else 13)
                 print(time.ctime())
                 print("Prediction: {0}".format(actionStr(result[len(result) - 1])))
 
@@ -158,10 +159,11 @@ class client(threading.Thread):
         i = 0
         while True:
             #if len(result) - i > 0:
-            if len(result) - i > 3:   
+            if len(result) - i > 2:   
                 #print(result)
                 #action = actionStr(result[i])
-                action = actionStr(stats.mode(result[i:i+5],axis=None)[0])
+                agg = stats.mode(result[i:i+3],axis=None)
+                action = actionStr(agg[0][0])
                 #print(arrMeasure.shape)
                 data = "#%s|%f|%f|%f|%f|" %(action, arrMeasure[0], arrMeasure[1], arrMeasure[2], arrMeasure[3])
                 #print(time.ctime())
@@ -192,7 +194,7 @@ while(initFlag):
         print("Handshake is done")
         
     port.flushInput()
-
+time.sleep(5)
 list_tempStr = [] 
 while (True):
     time.sleep(dataReadTime)
