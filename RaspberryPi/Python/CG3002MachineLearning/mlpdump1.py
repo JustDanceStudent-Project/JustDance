@@ -40,68 +40,24 @@ def window_input (data):
 def label(x):
     # List of datasets present in work folder
     return {
-        #0: "anniyastc", # Classifier can't reliably differentiate turn clap and squat turn clap
-        #1: "danastc",
-        
-        #12: "anniya1_tc", #Bad data
-        #16: "anniya1_fb",
-        #18: "yh_ss", 
-
-                
-        0: "YC_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        1: "Sneha_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        2: "Marini_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        
-        3: "Anniya_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        4: "BY_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        5: "Dana_Final_RAW", #Front Back, Side Step misclassification (Relevant actions removed)
-        
-        6: "anniyatc",
-        7: "bytc",
-        8: "marinitc",
-
-        9: "dana_tc",
-        10: "dawoodtc",
-        11: "sneha_tc",
-        
-        12: "anniya!_fbss",
-        13: "by!_fbss",
-        14: "dana!_fbss",
-        
-        15: "sneha_fb",
-        16: "yh_fb",
-        
-        17: "sneha_ss",
-        18: "marini_ss",
-
-        19: "dana_jj",                      
-        20: "marini_jj",                      
-        
-        21: "sneha_win360",
-        22: "marini_win360",
-        
-        23: "yh_win", 
-        24: "marini_win", 
-        25: "sneha_win", 
-        
-        26: "sneha_stc",
-        27: "marini_stc",
-
-        28: "dana_14",
-        29: "sneha_finalmove",
-
-        30: "AnniyaMoves12Nov",
-        31: "Sneha_Moves_Nov12",
-        
+        0: "dana1-5",
+        1: "sneha1-5",
+        2: "dana!1-12!jump",
+        3: "dana_jmp",
+        4: "by1-12",
+        5: "sneha6-9_12",
+        6: "marini1-7_10",
+        7: "anniya",
+        8: "data_finalcollect",
     }.get(x, "")
     
 finalListData = []
 finalListTarget = []
-for x in range(0,32)    :
+for x in range(0,9)    :
     print("Parsing {0}".format(label(x)))
     ds1 = pd.read_excel(label(x)+'.xlsx', header=None, delim_whitespace=True)
     ds1.dropna(axis=0, how='any', inplace=True)
-    ds1.columns = ["activity","body_yaw","body_pitch","body_roll","body_xAccel","body_yAccel","body_zAccel","hand_xAccel","hand_yAccel","hand_zAccel"]
+    ds1.columns = ["activity","body_xAccel","body_xAccel","body_xAccel","body_xAccel","body_yAccel","body_zAccel","hand_xAccel","hand_yAccel","hand_zAccel","body_xAccel","body_xAccel","body_xAccel","body_xAccel"]
     #print(ds1.shape)
 
     list_dataSet = []
@@ -137,6 +93,7 @@ print("Merging parsed datasets")
 
 arrayData = np.concatenate((finalListData[0],finalListData[1]),axis=0)
 arrayTarget = np.concatenate((finalListTarget[0],finalListTarget[1]),axis=0)
+
 for x in range(2,len(finalListData)):
     arrayData = np.concatenate((arrayData,finalListData[x]),axis=0)
     arrayTarget = np.concatenate((arrayTarget,finalListTarget[x]),axis=0)
