@@ -7,7 +7,6 @@ import client_auth
 import socket
 import re
 import numpy as np
-from scipy import stats
 from scipy import signal
 from sklearn import preprocessing
 from sklearn.externals import joblib
@@ -18,7 +17,7 @@ warnings.filterwarnings('ignore')
 
 HELLO = b'\x02'
 ACK = b'\x00'
-ip_addr = '172.17.113.221'
+ip_addr = '172.17.114.170'
 port_num = 8080
 portName = '/dev/ttyAMA0'
 baudRate = 115200
@@ -96,7 +95,7 @@ class processData (threading.Thread):
                     print('Array has NaN')
                     continue
                 arrMeasure = arrMeasure[-4:]
-                arrInput = np.delete(arrInput, np.s_[:3], axis=1)
+                #arrInput = np.delete(arrInput, np.s_[:3], axis=1)
                 arrInput = np.delete(arrInput, np.s_[-4:], axis=1)
                 
                 arrInput = arrInput.flatten()
@@ -152,11 +151,9 @@ class client(threading.Thread):
         global arrMeasure
         i = 0
         while True:
-            #if len(result) - i > 0:
-            if len(result) - i > 3:   
+            if len(result) - i > 0:
                 #print(result)
-                #action = actionStr(result[i])
-                action = actionStr(stats.mode(result[i:i+5],axis=None)[0])
+                action = actionStr(result[i])
                 #print(arrMeasure.shape)
                 data = "#%s|%f|%f|%f|%f|" %(action, arrMeasure[0], arrMeasure[1], arrMeasure[2], arrMeasure[3])
                 #print(time.ctime())
